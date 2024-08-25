@@ -4,14 +4,14 @@ import 'regenerator-runtime/runtime';
 
 const DataFetcher = () => {
 
-    const [data,setData] = useState("");
+    const [data,setData] = useState({});
 
     useEffect(() => {
         const fetchData = async ()=>{
             try{
                 const response = await fetch("https://dummyjson.com/products");
                 const result = await response.json();
-                setData(result.products);
+                setData(result);
             }
             catch(error){
                 console.error("Error fetching data",error)
@@ -21,26 +21,16 @@ const DataFetcher = () => {
         fetchData();
     },[]);
 
-    console.log(data);
+    // console.log(Object.keys(data).length);
 
     return (
         <div>
-            {data.length > 0 ? (
-                data.map((product) => (
-                    <div key={product.id} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px' }}>
-                        <h2>{product.title}</h2>
-                        <p>{product.description}</p>
-                        <p><strong>Category:</strong> {product.category}</p>
-                        <p><strong>Price:</strong> ${product.price}</p>
-                        <p><strong>Discount:</strong> {product.discountPercentage}%</p>
-                        <p><strong>Rating:</strong> {product.rating} / 5</p>
-                        <p><strong>Stock:</strong> {product.stock} units available</p>
-                        <img src={product.thumbnail} alt={product.title} style={{ width: '100px' }} />
-                    </div>
-                ))
-            ) : (
-                <p>Loading products...</p>
-            )}
+            {Object.keys(data).length>0?
+            <div>
+                <h1>Data Fetched from API</h1>
+                <pre>{JSON.stringify(data, null, 2)}</pre>
+            </div>:<p>loading...</p>
+            }
         </div>
     );
 };
