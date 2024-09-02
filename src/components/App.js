@@ -1,16 +1,52 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import './../styles/App.css';
-import DataFetcher from "./DataFetcher";
+import 'regenerator-runtime/runtime';
 
-const App = () => {
-  return (
-    <div>
-        {/* Do not remove the main div */}
+const DataFetcher = () => {
+  const [apiData, setApiData] = useState();
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://dummyjson.com/products');
         
-        <DataFetcher />
-    </div>
-  )
-}
+        const data = await response.json();
+        
+        if (data) {
+          setApiData(data);
+        } else {
+          setApiData([]);
+        }
+      } catch (error) {
+        setError('An error occurred: ' + error.message);
+        setApiData([]);
+      }
+    };
+    fetchData();
+  }, []);
 
-export default App
+  if (error) {
+    return <h1>{error}</h1>;
+  }
+  if(apiData===undefined){
+   return <h1>No data found</h1>
+  }
+
+
+  return (
+    <div id="main">
+      {apiData?  (
+        <>
+          <h1 id="header">Data Fetched from API</h1>
+          <pre id="output">{JSON.stringify(apiData, null, 2)|| apiData}</pre>
+        </>
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
+  );
+};
+
+export default DataFetcher;
